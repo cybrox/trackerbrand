@@ -18,11 +18,21 @@ const self = {
       y: 5.287278
     });
   },
+
+  getPositionHistory(size) {
+    return database
+      .get('positions')
+      .sortBy('id')
+      .reverse()
+      .take(size)
+      .value()
+  },
   
   getLatestPosition() {
     return database
       .get('positions')
       .sortBy('id')
+      .reverse()
       .take(1)
       .value()
   },

@@ -1,5 +1,6 @@
 const database = require('./../database');
 const utility = require('./_utility');
+const url = require('url');
 const fs = require('fs');
 
 const self = {
@@ -13,7 +14,16 @@ const self = {
     fs.createReadStream(`interface/index.html`).pipe(resp);
   },
 
-  get(_req, resp) {
+  getHistory(req, resp) {
+    const link = url.parse(req.url, {parseQueryString: true});
+    const size = link.query.n || 20;
+    const positions = database.getPositionHistory(size);
+    const payload = {data: {position: positions}};
+
+    resp.writeHead(200).end(JSON.stringify(payload));
+  },
+
+  getLatest(_req, resp) {
     const position = database.getLatestPosition();
     const payload = {data: {position: position[0]}};
 

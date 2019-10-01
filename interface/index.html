@@ -37,17 +37,62 @@
           if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             const payload = JSON.parse(xmlHttp.responseText);
             const pos = payload.data.position;
-            L.marker([pos.x, pos.y]).addTo(window.trackermap);
+            const mark = L.marker([pos.x, pos.y]).addTo(window.trackermap);
+            const date = (new Date(pos.t*1000)).toLocaleString();
+            mark.bindPopup("Letzte Position<br />" + date);
+            if (window.livemarker) window.livemarker.remove();
+            window.livemarker = mark;
           }
         }
         xmlHttp.open('GET', '/position/latest', true);
         xmlHttp.send(null);
       }
 
+      function showHistoryOnMap(size) {
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            const payload = JSON.parse(xmlHttp.responseText);
+            const pos = payload.data.position.map(p => [p.x, p.y]);
+            const opts = {color: '#0000ff'};
+
+            const line = L.polyline(pos, opts).addTo(window.trackermap);
+            if (window.historyline) window.historyline.remove();
+            window.historyline = line;
+          }
+        }
+        xmlHttp.open('GET', `/position/history?n=${size}`, true);
+        xmlHttp.send(null);
+      }
+
+
       setupMap();
       scaleMap();
-      showCurrentPositionOnMap();
       window.onresize = scaleMap();
+
+      let options = {};
+      const hash = (window.location.hash || '').replace('#', '');
+      const hashParams = hash.split(',').map(pair => pair.split(':'));
+      hashParams.forEach(pair => options[pair[0]] = pair[1]);
+
+
+      // In live mode, only the current position is fetched
+      // The site is automatically updated every 10 seconds
+      if (options.show == 'live') {
+        showCurrentPositionOnMap();
+        window.setInterval(function() {
+          showCurrentPositionOnMap();
+        }, 10000);
+      }
+
+
+      // In history mode, a set amount of datapoints is fetched
+      // and a history line is drawn, showing the progress
+      if (options.show == 'history') {
+        const size = options.size || 20;
+        showCurrentPositionOnMap();
+        showHistoryOnMap(size);
+      }
     </script>
   </body>
 </html>
