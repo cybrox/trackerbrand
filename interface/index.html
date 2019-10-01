@@ -31,8 +31,22 @@
         document.getElementById('tracker').style.height = `${window.innerHeight}px`;
       }
 
+      function showCurrentPositionOnMap() {
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            const payload = JSON.parse(xmlHttp.responseText);
+            const pos = payload.data.position;
+            L.marker([pos.x, pos.y]).addTo(window.trackermap);
+          }
+        }
+        xmlHttp.open('GET', '/position/latest', true);
+        xmlHttp.send(null);
+      }
+
       setupMap();
       scaleMap();
+      showCurrentPositionOnMap();
       window.onresize = scaleMap();
     </script>
   </body>

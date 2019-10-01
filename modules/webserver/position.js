@@ -15,7 +15,7 @@ const self = {
 
   get(_req, resp) {
     const position = database.getLatestPosition();
-    const payload = {data: {position}};
+    const payload = {data: {position: position[0]}};
 
     resp.writeHead(200).end(JSON.stringify(payload));
   },
