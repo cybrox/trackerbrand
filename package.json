@@ -1,0 +1,14 @@
+{
+  "name": "trackerbrand",
+  "version": "1.0.0",
+  "description": "Segelbrand Tracker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sven Gehring <cbrxde@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "lowdb": "^1.0.0"
+  }
+}
