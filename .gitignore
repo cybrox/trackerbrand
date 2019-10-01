@@ -3,3 +3,6 @@ node_modules/
 
 # Ignore databases
 database/*.json
+
+# Ignore exported map tiles
+interface/maptiles/**/*.png
