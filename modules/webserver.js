@@ -1,5 +1,6 @@
 const http = require('http');
 const url = require('url');
+const fs = require('fs');
 
 const positionController = require('./webserver/position');
 
@@ -15,10 +16,22 @@ const self = {
     self.route('GET', '/position/display', route, req, resp, positionController, 'show');
     self.route('GET', '/position/latest', route, req, resp, positionController, 'get');
     self.route('POST', '/position/add', route, req, resp, positionController, 'add');
-    
     self.route('POST', '/position/setup', route, req, resp, positionController, 'setup');
   
+    self.routeStaticFile(route, req, resp);
+
     if (!req.__handlingRequest) resp.writeHead(404).end('Not found');
+  },
+
+  routeStaticFile(route, req, resp) {
+    if (route[0] == 'GET' && route[1].indexOf('/resource/') === 0) {
+      const actualPath = `interface/${route[1].replace('/resource/', '')}`;
+      if (fs.existsSync(actualPath)) {
+        resp.writeHead(200);
+        req.__handlingRequest = true;
+        fs.createReadStream(actualPath).pipe(resp);  
+      }
+    }
   },
 
   route(verb, path, routeInfo, request, response, controller, handler) {

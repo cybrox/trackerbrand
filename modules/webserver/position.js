@@ -1,5 +1,6 @@
 const database = require('./../database');
 const utility = require('./_utility');
+const fs = require('fs');
 
 const self = {
   setup(_req, resp) {
@@ -8,7 +9,8 @@ const self = {
   },
 
   show(_req, resp) {
-
+    resp.writeHead(200);
+    fs.createReadStream(`interface/index.html`).pipe(resp);
   },
 
   get(_req, resp) {

@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <link rel="stylesheet" charset="utf-8" href="/resource/leaflet/leaflet.css" />
+    <script type="text/javascript" charset="utf-8" src="/resource/leaflet/leaflet.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #333333;
+      }
+    </style>
+
+    <title>Trackerbrand Viewer</title>
+  </head>
+  <body>
+    <div id="tracker" style="height: 1080px;"></div>
+
+    <script>
+      function setupMap() {
+        const tilepath = '/resource/maptiles/{z}/{x}/{y}.png';
+        const tilezoom = {maxZoom: 12};
+        const defaultPosition = [52.696111, 5.287278];
+        const defaultZoom = 11;
+        
+        window.trackermap = L.map('tracker').setView(defaultPosition, defaultZoom);
+        L.tileLayer(tilepath, tilezoom).addTo(window.trackermap);
+      }
+
+      function scaleMap() {
+        document.getElementById('tracker').style.height = `${window.innerHeight}px`;
+      }
+
+      setupMap();
+      scaleMap();
+      window.onresize = scaleMap();
+    </script>
+  </body>
+</html>
