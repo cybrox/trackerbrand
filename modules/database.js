@@ -1,11 +1,11 @@
 const low = require('lowdb');
 const fsync = require('lowdb/adapters/FileSync');
-const adapter = new fsync('database/positions.json');
-const db = low(adapter);
+const adapter = new fsync('database/database.json');
+const database = low(adapter);
 
 const self = {
   setupDatabaseFile() {
-    db
+    database
       .defaults({
         positions: [],
         user: {},
@@ -13,19 +13,39 @@ const self = {
       })
       .write();
 
-    db
-      .get('positions')
-      .push({
-        id: 1,
-        x: 0,
-        y: 0,
-        t: 0
-      })
-      .write()
+    self.addNewPosition({
+      x: 52.696111,
+      y: 5.287278
+    });
   },
   
   getLatestPosition() {
+    return database
+      .get('positions')
+      .sortBy('id')
+      .take(1)
+      .value()
+  },
 
+  addNewPosition(pos) {
+    const count = database
+      .get('positions')
+      .size()
+      .value();
+
+    database
+      .get('positions')
+      .push({
+        id: (count + 1),
+        x: pos.x || 0,
+        y: pos.y || 0,
+        t: pos.t || 0
+      })
+      .write();
+
+    database
+      .update('count', n => n + 1)
+      .write();
   }
 }
 

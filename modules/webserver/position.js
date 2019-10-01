@@ -1,21 +1,28 @@
 const database = require('./../database');
+const utility = require('./_utility');
 
 const self = {
-  setup(request, response) {
+  setup(_req, resp) {
     database.setupDatabaseFile();
-    response.writeHead(200).end('Set up new database');
+    resp.writeHead(200).end('Set up new database');
   },
 
-  show(request, response) {
-
-  },
-
-  get(request, response) {
+  show(_req, resp) {
 
   },
 
-  add(request, response) {
-    
+  get(_req, resp) {
+    const position = database.getLatestPosition();
+    const payload = {data: {position}};
+
+    resp.writeHead(200).end(JSON.stringify(payload));
+  },
+
+  add(req, resp) {
+    utility.withBody(req, resp, (req, resp, body) => {
+      database.addNewPosition(body);
+      resp.writeHead(200).end('Saved new position');
+    });
   },
 };
 
