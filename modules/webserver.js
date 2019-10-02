@@ -16,7 +16,10 @@ const self = {
     self.route('GET', '/position/display', route, req, resp, positionController, 'show');
     self.route('GET', '/position/history', route, req, resp, positionController, 'getHistory');
     self.route('GET', '/position/latest', route, req, resp, positionController, 'getLatest');
-    self.route('POST', '/position/add', route, req, resp, positionController, 'add');
+
+    self.route('POST', '/position/add', route, req, resp, positionController, 'addLocal');
+    self.route('POST', '/position/add-remote', route, req, resp, positionController, 'addRemote');
+
     self.route('POST', '/position/setup', route, req, resp, positionController, 'setup');
   
     self.routeStaticFile(route, req, resp);

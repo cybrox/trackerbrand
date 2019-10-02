@@ -30,12 +30,27 @@ const self = {
     resp.writeHead(200).end(JSON.stringify(payload));
   },
 
-  add(req, resp) {
+  addLocal(req, resp) {
     utility.withBody(req, resp, (req, resp, body) => {
       database.addNewPosition(body);
       resp.writeHead(200).end('Saved new position');
     });
   },
+
+  addRemote(req, resp) {
+    utility.withBody(req, resp, (req, resp, body) => {
+      if (body.app_id != 'segelbrandgps') {
+        return resp.writeHead(401).end('Unauthorized');
+      }
+
+      if (!body.payload_fields || !body.payload_fields.t) {
+        return resp.writeHead(400).end('Bad request');
+      }
+
+      database.addNewPosition(body.payload_fields);
+      resp.writeHead(200).end('Saved new position');
+    });
+  }
 };
 
 module.exports = self;
