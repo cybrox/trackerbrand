@@ -4,3 +4,10 @@ Trackerbrand is a simple proof-of-concept location history map. In its current u
 ## Usage
 * Map tiles are added as described in [this stackoverflow post](https://stackoverflow.com/a/43608920)
 * The databse must be created via `POST` request to `/position/setup`
+
+## Map viewing mode
+The index file is served at `/position/display`. The passed hash specifies how the map is shown.   
+The following are valid display options:
+* `#show:current` Shows the current position
+* `#show:live` Shows the current position and updates position + map view every 10s
+* `#show:history,size=n` Shows a history of the latest n positions
