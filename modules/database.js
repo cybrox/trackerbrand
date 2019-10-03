@@ -49,13 +49,18 @@ const self = {
         id: (count + 1),
         x: pos.x || 0,
         y: pos.y || 0,
-        t: pos.t || 0
+        t: pos.t || 0,
+        tt: self.currentTimestamp()
       })
       .write();
 
     database
       .update('count', n => n + 1)
       .write();
+  },
+
+  currentTimestamp() {
+    return Math.round((new Date()).getTime() / 1000);
   }
 }
 

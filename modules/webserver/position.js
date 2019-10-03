@@ -32,6 +32,10 @@ const self = {
 
   addLocal(req, resp) {
     utility.withBody(req, resp, (req, resp, body) => {
+      if (self.validatePayload(body)) {
+        return resp.writeHead(400).end('Bad request');
+      }
+
       database.addNewPosition(body);
       resp.writeHead(200).end('Saved new position');
     });
@@ -47,9 +51,21 @@ const self = {
         return resp.writeHead(400).end('Bad request');
       }
 
+      if (self.validatePayload(body.payload_fields)) {
+        return resp.writeHead(400).end('Bad request');
+      }
+
       database.addNewPosition(body.payload_fields);
       resp.writeHead(200).end('Saved new position');
     });
+  },
+
+
+  validatePayload(payload) {
+    if (!payload.x) return false;
+    if (!payload.y) return false;
+    if (!payload.t) return false;
+    return true;
   }
 };
 
