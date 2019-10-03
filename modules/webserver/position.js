@@ -32,7 +32,7 @@ const self = {
 
   addLocal(req, resp) {
     utility.withBody(req, resp, (req, resp, body) => {
-      if (self.validatePayload(body)) {
+      if (!self.validatePayload(body)) {
         return resp.writeHead(400).end('Bad request');
       }
 
@@ -51,7 +51,7 @@ const self = {
         return resp.writeHead(400).end('Bad request');
       }
 
-      if (self.validatePayload(body.payload_fields)) {
+      if (!self.validatePayload(body.payload_fields)) {
         return resp.writeHead(400).end('Bad request');
       }
 
