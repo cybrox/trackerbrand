@@ -21,7 +21,7 @@
         const tilepath = '/resource/maptiles/{z}/{x}/{y}.png';
         const tilezoom = {maxZoom: 12};
         const defaultPosition = [52.696111, 5.287278];
-        const defaultZoom = 11;
+        const defaultZoom = 10;
         
         window.trackermap = L.map('tracker').setView(defaultPosition, defaultZoom);
         L.tileLayer(tilepath, tilezoom).addTo(window.trackermap);
@@ -29,6 +29,10 @@
 
       function scaleMap() {
         document.getElementById('tracker').style.height = `${window.innerHeight}px`;
+      }
+
+      function showMapPosition(coordinates, zoom) {
+        window.trackermap.setView(coordinates, zoom);
       }
 
       function showCurrentPositionOnMap() {
@@ -42,6 +46,7 @@
             mark.bindPopup("Letzte Position<br />" + date);
             if (window.livemarker) window.livemarker.remove();
             window.livemarker = mark;
+            showMapPosition([pos.x, pos.y], 10)
           }
         }
         xmlHttp.open('GET', '/position/latest', true);
@@ -76,6 +81,12 @@
       hashParams.forEach(pair => options[pair[0]] = pair[1]);
 
 
+      // In curren mode, only the current position is fetched
+      // the site is not updated, it's a one off thing
+      if (options.show == 'current') {
+        showCurrentPositionOnMap();
+      }
+
       // In live mode, only the current position is fetched
       // The site is automatically updated every 10 seconds
       if (options.show == 'live') {
@@ -84,7 +95,6 @@
           showCurrentPositionOnMap();
         }, 10000);
       }
-
 
       // In history mode, a set amount of datapoints is fetched
       // and a history line is drawn, showing the progress
