@@ -21,7 +21,7 @@
         const tilepath = '/resource/maptiles/{z}/{x}/{y}.png';
         const tilezoom = {maxZoom: 12};
         const defaultPosition = [52.696111, 5.287278];
-        const defaultZoom = 10;
+        const defaultZoom = 11;
         
         window.trackermap = L.map('tracker').setView(defaultPosition, defaultZoom);
         L.tileLayer(tilepath, tilezoom).addTo(window.trackermap);
@@ -42,11 +42,11 @@
             const payload = JSON.parse(xmlHttp.responseText);
             const pos = payload.data.position;
             const mark = L.marker([pos.x, pos.y]).addTo(window.trackermap);
-            const date = (new Date(pos.t*1000)).toLocaleString();
-            mark.bindPopup("Letzte Position<br />" + date);
+            const date = (new Date(pos.t*1000)).toLocaleString('de-DE');
+            mark.bindPopup("Letzte Position<br />" + date).openPopup();
             if (window.livemarker) window.livemarker.remove();
             window.livemarker = mark;
-            showMapPosition([pos.x, pos.y], 10)
+            showMapPosition([pos.x, pos.y], 11)
           }
         }
         xmlHttp.open('GET', '/position/latest', true);
