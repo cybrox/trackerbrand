@@ -59,11 +59,20 @@
           if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             const payload = JSON.parse(xmlHttp.responseText);
             const pos = payload.data.position.map(p => [p.x, p.y]);
-            const opts = {color: '#0000ff'};
 
-            const line = L.polyline(pos, opts).addTo(window.trackermap);
+            const lOpts = {color: '#0000ff', weight: 1};
+            const cOpts = {color: '#0000ff', radius: 5};
+
+            const line = L.polyline(pos, lOpts).addTo(window.trackermap);
             if (window.historyline) window.historyline.remove();
             window.historyline = line;
+
+            pos.forEach((dot, i) => {
+              const time = payload.data.position[i].tt || 0;
+              const date = (new Date(time*1000)).toLocaleString('de-DE');
+              const circle = L.circle(dot, cOpts).addTo(window.trackermap);
+              circle.bindTooltip(date);
+            });
           }
         }
         xmlHttp.open('GET', `/position/history?n=${size}`, true);
@@ -100,7 +109,6 @@
       // and a history line is drawn, showing the progress
       if (options.show == 'history') {
         const size = options.size || 20;
-        showCurrentPositionOnMap();
         showHistoryOnMap(size);
       }
     </script>
