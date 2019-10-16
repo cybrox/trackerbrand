@@ -10,4 +10,5 @@ The index file is served at `/position/display`. The passed hash specifies how t
 The following are valid display options:
 * `#show:current` Shows the current position
 * `#show:live` Shows the current position and updates position + map view every 10s
-* `#show:history,size=n` Shows a history of the latest n positions
+* `#show:history,size=n` Shows a history of the latest `n` positions
+* `#show:trip,threshold:t,interval:i` Shows the trip point-by-point. Omitting points with a cumulative distance `<t`, adding a new point every `i`. (`0.0007` has been proven to be a reasonable `t` for skipping port times)
