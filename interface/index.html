@@ -122,6 +122,9 @@
       setupMap();
       scaleMap();
       window.onresize = scaleMap();
+      window.onhashchange = function () {
+        window.location.reload();
+      }
 
       let options = {};
       const hash = (window.location.hash || '').replace('#', '');
