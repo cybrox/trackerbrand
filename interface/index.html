@@ -9,12 +9,23 @@
         padding: 0;
         background: #333333;
       }
+
+      #time {
+        position: fixed;
+        top: 5px;
+        right: 5px;
+        text-align: right;
+        color: red;
+        font-size: 1.3em;
+        z-index: 999;
+      }
     </style>
 
     <title>Trackerbrand Viewer</title>
   </head>
   <body>
     <div id="tracker" style="height: 1080px;"></div>
+    <div id="time"></div>
 
     <script>
       function setupMap() {
@@ -112,7 +123,9 @@
           const circle = L.circle(cPos, cOpts).addTo(window.trackermap);
           circle.bindTooltip(date);
           const line = L.polyline([cPos, nPos], lOpts).addTo(window.trackermap);
-          showMapPosition(cPos, 13)
+
+          showMapPosition(cPos, 13);
+          document.getElementById('time').innerText = date;
 
           if (next) animateMapDots(positions, i+1, delay);
         }, delay);
