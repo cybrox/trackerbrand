@@ -53,30 +53,52 @@
         xmlHttp.send(null);
       }
 
-      function showHistoryOnMap(size) {
+      function showHistoryOnMap(size, animateTrip) {
         const xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() { 
           if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             const payload = JSON.parse(xmlHttp.responseText);
             const pos = payload.data.position.map(p => [p.x, p.y]);
-
-            const lOpts = {color: '#0000ff', weight: 1};
-            const cOpts = {color: '#0000ff', radius: 5};
-
-            const line = L.polyline(pos, lOpts).addTo(window.trackermap);
+            const opts = {color: '#0000ff', weight: 1};
+            const line = L.polyline(pos, opts).addTo(window.trackermap);
             if (window.historyline) window.historyline.remove();
             window.historyline = line;
 
-            pos.forEach((dot, i) => {
-              const time = payload.data.position[i].tt || 0;
-              const date = (new Date(time*1000)).toLocaleString('de-DE');
-              const circle = L.circle(dot, cOpts).addTo(window.trackermap);
-              circle.bindTooltip(date);
-            });
+            if (animateTrip) {
+              animateMapDots(payload.data.position.reverse(), 0);
+            } else {
+              plotMapDots(payload.data.position, 0);
+            }
           }
         }
         xmlHttp.open('GET', `/position/history?n=${size}`, true);
         xmlHttp.send(null);
+      }
+
+      function plotMapDots(positions) {
+        const opts = {color: '#0000ff', radius: 10};
+
+        positions.forEach((pos) => {
+          const time = pos.tt || 0;
+          const date = (new Date(time*1000)).toLocaleString('de-DE');
+          const circle = L.circle([pos.x, pos.y], opts).addTo(window.trackermap);
+          circle.bindTooltip(date + '<br />' + pos.x + ' / ' + pos.y);
+        });
+      }
+
+      function animateMapDots(positions, i) {
+        const opts = {color: '#0000ff', radius: 10};
+
+        window.setTimeout(() => {
+          const pos = [positions[i].x, positions[i].y];
+          const time = positions[i].tt || 0;
+          const date = (new Date(time*1000)).toLocaleString('de-DE');
+          const circle = L.circle(pos, opts).addTo(window.trackermap);
+          circle.bindTooltip(date);
+          showMapPosition(pos, 13)
+
+          if (positions[i+1]) animateMapDots(positions, i+1);
+        }, 1);
       }
 
 
@@ -109,7 +131,13 @@
       // and a history line is drawn, showing the progress
       if (options.show == 'history') {
         const size = options.size || 20;
-        showHistoryOnMap(size);
+        showHistoryOnMap(size, false);
+      }
+
+      // In trip mode, all datapoints are fetched and a history line
+      // is drawn and followed in somewhat real-time
+      if (options.show == 'trip') {
+        showHistoryOnMap(12000, true);
       }
     </script>
   </body>
