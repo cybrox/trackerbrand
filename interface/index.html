@@ -58,11 +58,6 @@
         xmlHttp.onreadystatechange = function() { 
           if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             const payload = JSON.parse(xmlHttp.responseText);
-            const pos = payload.data.position.map(p => [p.x, p.y]);
-            const opts = {color: '#0000ff', weight: 1};
-            const line = L.polyline(pos, opts).addTo(window.trackermap);
-            if (window.historyline) window.historyline.remove();
-            window.historyline = line;
 
             if (historyOpts.animateTrip) {
               let tooClose = [];
@@ -77,6 +72,12 @@
               const viableDots = payload.data.position.filter((x, i) => tooClose.indexOf(i) === -1);
               animateMapDots(viableDots, 0, historyOpts.interval);
             } else {
+              const pos = payload.data.position.map(p => [p.x, p.y]);
+              const opts = {color: '#0000ff', weight: 1};
+              const line = L.polyline(pos, opts).addTo(window.trackermap);
+              if (window.historyline) window.historyline.remove();
+              window.historyline = line;
+
               plotMapDots(payload.data.position, 0);
             }
           }
@@ -97,18 +98,21 @@
       }
 
       function animateMapDots(positions, i, delay) {
-        const opts = {color: '#0000ff', radius: 10};
+        const cOpts = {color: '#0000ff', radius: 10};
+        const lOpts = {color: '#0000ff', weight: 1};
 
         window.setTimeout(() => {
           const curr = positions[i];
           const next = positions[i+1];
+          const cPos = [curr.x, curr.y];
+          const nPos = [next.x, next.y];
 
-          const pos = [curr.x, curr.y];
           const time = curr.tt || 0;
           const date = (new Date(time*1000)).toLocaleString('de-DE');
-          const circle = L.circle(pos, opts).addTo(window.trackermap);
+          const circle = L.circle(cPos, cOpts).addTo(window.trackermap);
           circle.bindTooltip(date);
-          showMapPosition(pos, 13)
+          const line = L.polyline([cPos, nPos], lOpts).addTo(window.trackermap);
+          showMapPosition(cPos, 13)
 
           if (next) animateMapDots(positions, i+1, delay);
         }, delay);
