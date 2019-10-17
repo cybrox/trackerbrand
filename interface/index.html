@@ -80,10 +80,12 @@
                 if (diff < historyOpts.threshold) tooClose.push(i);
               }
 
-              const viableDots = payload.data.position.filter((x, i) => tooClose.indexOf(i) === -1);
+              const viableDots = payload.data.position.filter(function (x, i) {
+                return tooClose.indexOf(i) === -1;
+              });
               animateMapDots(viableDots, 0, historyOpts.interval);
             } else {
-              const pos = payload.data.position.map(p => [p.x, p.y]);
+              const pos = payload.data.position.map(function (p) { return [p.x, p.y]; });
               const opts = {color: '#0000ff', weight: 1};
               const line = L.polyline(pos, opts).addTo(window.trackermap);
               if (window.historyline) window.historyline.remove();
@@ -100,7 +102,7 @@
       function plotMapDots(positions) {
         const opts = {color: '#0000ff', radius: 10};
 
-        positions.forEach((pos) => {
+        positions.forEach(function (pos) {
           const time = pos.tt || 0;
           const date = (new Date(time*1000)).toLocaleString('de-DE');
           const circle = L.circle([pos.x, pos.y], opts).addTo(window.trackermap);
@@ -112,7 +114,7 @@
         const cOpts = {color: '#0000ff', radius: 10};
         const lOpts = {color: '#0000ff', weight: 1};
 
-        window.setTimeout(() => {
+        window.setTimeout(function () {
           const curr = positions[i];
           const next = positions[i+1];
           const cPos = [curr.x, curr.y];
@@ -141,8 +143,12 @@
 
       let options = {};
       const hash = (window.location.hash || '').replace('#', '');
-      const hashParams = hash.split(',').map(pair => pair.split(':'));
-      hashParams.forEach(pair => options[pair[0]] = pair[1]);
+      const hashParams = hash.split(',').map(function (pair) {
+        return pair.split(':')
+      });
+      hashParams.forEach(function (pair) {
+        return options[pair[0]] = pair[1];
+      });
 
 
       // In curren mode, only the current position is fetched
