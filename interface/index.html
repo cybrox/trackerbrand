@@ -39,7 +39,7 @@
       }
 
       function scaleMap() {
-        document.getElementById('tracker').style.height = `${window.innerHeight}px`;
+        document.getElementById('tracker').style.height = window.innerHeight + 'px';
       }
 
       function showMapPosition(coordinates, zoom) {
@@ -93,7 +93,7 @@
             }
           }
         }
-        xmlHttp.open('GET', `/position/history?n=${size}`, true);
+        xmlHttp.open('GET', '/position/history?n=' + size, true);
         xmlHttp.send(null);
       }
 
