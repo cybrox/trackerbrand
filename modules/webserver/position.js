@@ -6,7 +6,8 @@ const fs = require('fs');
 const self = {
   setup(_req, resp) {
     database.setupDatabaseFile();
-    resp.writeHead(200).end('Set up new database');
+    resp.writeHead(200);
+    resp.end('Set up new database');
   },
 
   show(_req, resp) {
@@ -21,43 +22,55 @@ const self = {
     const positions = database.getPositionHistory(size);
     const payload = {data: {position: positions}};
 
-    resp.writeHead(200).end(JSON.stringify(payload));
+    resp.writeHead(200);
+    resp.end(JSON.stringify(payload));
   },
 
   getLatest(_req, resp) {
     const position = database.getLatestPosition();
     const payload = {data: {position: position[0]}};
 
-    resp.writeHead(200).end(JSON.stringify(payload));
+    resp.writeHead(200);
+    resp.end(JSON.stringify(payload));
   },
 
   addLocal(req, resp) {
     utility.withBody(req, resp, (req, resp, body) => {
       if (!self.validatePayload(body)) {
-        return resp.writeHead(400).end('Bad request');
+        resp.writeHead(400);
+        resp.end('Bad request');
+        return;
       }
 
       database.addNewPosition(body);
-      resp.writeHead(200).end('Saved new position');
+      resp.writeHead(200);
+      resp.end('Saved new position');
     });
   },
 
   addRemote(req, resp) {
     utility.withBody(req, resp, (req, resp, body) => {
       if (body.app_id != 'segelbrandgps') {
-        return resp.writeHead(401).end('Unauthorized');
+        resp.writeHead(401);
+        resp.end('Unauthorized');
+        return;
       }
 
       if (!body.payload_fields || !body.payload_fields.t) {
-        return resp.writeHead(400).end('Bad request');
+        resp.writeHead(400);
+        resp.end('Bad request');
+        return;
       }
 
       if (!self.validatePayload(body.payload_fields)) {
-        return resp.writeHead(400).end('Bad request');
+        resp.writeHead(400);
+        resp.end('Bad request');
+        return;
       }
 
       database.addNewPosition(body.payload_fields);
-      resp.writeHead(200).end('Saved new position');
+      resp.writeHead(200);
+      resp.end('Saved new position');
     });
   },
 
