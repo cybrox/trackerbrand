@@ -10,6 +10,7 @@ const self = {
   },
 
   show(_req, resp) {
+    resp.setHeader('Content-Type', 'text/html');
     resp.writeHead(200);
     fs.createReadStream(`interface/index.html`).pipe(resp);
   },

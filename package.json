@@ -9,6 +9,7 @@
   "author": "Sven Gehring <cbrxde@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "lowdb": "^1.0.0"
+    "lowdb": "^1.0.0",
+    "mime-types": "^2.1.24"
   }
 }

@@ -1,3 +1,4 @@
+const mime = require('mime-types');
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
@@ -31,6 +32,7 @@ const self = {
     if (route[0] == 'GET' && route[1].indexOf('/resource/') === 0) {
       const actualPath = `interface/${route[1].replace('/resource/', '')}`;
       if (fs.existsSync(actualPath)) {
+        resp.setHeader('Content-Type', mime.lookup(actualPath));
         resp.writeHead(200);
         req.__handlingRequest = true;
         fs.createReadStream(actualPath).pipe(resp);  
