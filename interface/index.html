@@ -60,7 +60,7 @@
             showMapPosition([pos.x, pos.y], 11)
           }
         }
-        xmlHttp.open('GET', '../latest', true);
+        xmlHttp.open('GET', './latest', true);
         xmlHttp.send(null);
       }
 
@@ -95,7 +95,7 @@
             }
           }
         }
-        xmlHttp.open('GET', '../history?n=' + size, true);
+        xmlHttp.open('GET', './history?n=' + size, true);
         xmlHttp.send(null);
       }
 

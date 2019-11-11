@@ -25,7 +25,10 @@ const self = {
   
     self.routeStaticFile(route, req, resp);
 
-    if (!req.__handlingRequest) resp.writeHead(404).end('Not found');
+    if (!req.__handlingRequest) {
+      resp.writeHead(404);
+      resp.end('Not found');
+    }
   },
 
   routeStaticFile(route, req, resp) {
