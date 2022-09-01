@@ -20,6 +20,7 @@ const self = {
 
     self.route('POST', '/position/add', route, req, resp, positionController, 'addLocal');
     self.route('POST', '/position/add-remote', route, req, resp, positionController, 'addRemote');
+    self.route('POST', '/position/add-remotes', route, req, resp, positionController, 'addRemotes');
 
     self.route('POST', '/position/setup', route, req, resp, positionController, 'setup');
 

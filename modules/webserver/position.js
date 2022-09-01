@@ -85,6 +85,40 @@ const self = {
     });
   },
 
+  addRemotes(req, resp) {
+    utility.withBody(req, resp, (req, resp, body) => {
+      if (body.app_id != 'segelbrandgps') {
+        console.warn("Unauthorized request");
+
+        resp.writeHead(401);
+        resp.end('Unauthorized');
+        return;
+      }
+
+      if (!body.payload_list || !Array.isArray(body.payload_list)) {
+        console.warn("Bad request, no body list");
+
+        resp.writeHead(400);
+        resp.end('Bad request');
+        return;
+      }
+
+      let added = "";
+      body.payload_list.forEach(pos => {
+        if (!self.validatePayload(pos)) {
+          console.warn("Bad request, invalid body payload, ignoring...");
+          return;
+        }
+
+        database.addNewPosition(pos);
+        added += `:${pos.x}/${pos.y} (@${pos.t} from ${pos.u})`;
+      });
+
+      resp.writeHead(200);
+      resp.end(`Saved new positions ${added}`);
+    });
+  },
+
 
   validatePayload(payload) {
     if (!payload.x) return false;
