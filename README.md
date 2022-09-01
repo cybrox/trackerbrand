@@ -12,3 +12,18 @@ The following are valid display options:
 * `#show:live` Shows the current position and updates position + map view every 10s
 * `#show:history,size=n` Shows a history of the latest `n` positions
 * `#show:trip,threshold:t,interval:i` Shows the trip point-by-point. Omitting points with a cumulative distance `<t`, adding a new point every `i`. (`0.0007` has been proven to be a reasonable `t` for skipping port times)
+
+## Submitting lcoations.
+Database must be set up once with a `POST /position/setup`
+An example of the payload that can be sent by a client to `POST /position/add-remote` to track a position:
+```json
+{
+    "app_id": "segelbrandgps",
+    "payload_fields": {
+    "x": 23,
+    "y": 23,
+    "t": 29839283,
+    "u": "ges"
+    }
+}
+```

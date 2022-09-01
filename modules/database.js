@@ -27,7 +27,7 @@ const self = {
       .take(size)
       .value()
   },
-  
+
   getLatestPosition() {
     return database
       .get('positions')
@@ -50,6 +50,7 @@ const self = {
         x: pos.x || 0,
         y: pos.y || 0,
         t: pos.t || 0,
+        u: pos.u || "",
         tt: self.currentTimestamp()
       })
       .write();

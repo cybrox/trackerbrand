@@ -22,7 +22,7 @@ const self = {
     self.route('POST', '/position/add-remote', route, req, resp, positionController, 'addRemote');
 
     self.route('POST', '/position/setup', route, req, resp, positionController, 'setup');
-  
+
     self.routeStaticFile(route, req, resp);
 
     if (!req.__handlingRequest) {
@@ -38,7 +38,7 @@ const self = {
         resp.setHeader('Content-Type', mime.lookup(actualPath));
         resp.writeHead(200);
         req.__handlingRequest = true;
-        fs.createReadStream(actualPath).pipe(resp);  
+        fs.createReadStream(actualPath).pipe(resp);
       }
     }
   },

@@ -17,10 +17,10 @@ const self = {
   },
 
   getHistory(req, resp) {
-    const link = url.parse(req.url, {parseQueryString: true});
+    const link = url.parse(req.url, { parseQueryString: true });
     const size = link.query.n || 20;
     const positions = database.getPositionHistory(size);
-    const payload = {data: {position: positions}};
+    const payload = { data: { position: positions } };
 
     resp.writeHead(200);
     resp.end(JSON.stringify(payload));
@@ -28,7 +28,7 @@ const self = {
 
   getLatest(_req, resp) {
     const position = database.getLatestPosition();
-    const payload = {data: {position: position[0]}};
+    const payload = { data: { position: position[0] } };
 
     resp.writeHead(200);
     resp.end(JSON.stringify(payload));
@@ -42,35 +42,46 @@ const self = {
         return;
       }
 
-      database.addNewPosition(body);
-      resp.writeHead(200);
-      resp.end('Saved new position');
+      // This way of adding data is no longer supported
+      // database.addNewPosition(body);
+      // resp.writeHead(200);
+      // resp.end('Saved new position');
+
+      resp.writeHead(405);
+      resp.end('Method not allowed');
     });
   },
 
   addRemote(req, resp) {
     utility.withBody(req, resp, (req, resp, body) => {
       if (body.app_id != 'segelbrandgps') {
+        console.warn("Unauthorized request");
+
         resp.writeHead(401);
         resp.end('Unauthorized');
         return;
       }
 
       if (!body.payload_fields || !body.payload_fields.t) {
+        console.warn("Bad request, no body or no time");
+
         resp.writeHead(400);
         resp.end('Bad request');
         return;
       }
 
       if (!self.validatePayload(body.payload_fields)) {
+        console.warn("Bad request, invalid body payload");
+
         resp.writeHead(400);
         resp.end('Bad request');
         return;
       }
 
-      database.addNewPosition(body.payload_fields);
+      const b = body.payload_fields;
+      database.addNewPosition(b);
       resp.writeHead(200);
-      resp.end('Saved new position');
+      resp.end(`Saved new position ${b.x}/${b.y} (@${b.t} from ${b.u}) `);
     });
   },
 
@@ -79,6 +90,7 @@ const self = {
     if (!payload.x) return false;
     if (!payload.y) return false;
     if (!payload.t) return false;
+    if (!payload.u) return false;
     return true;
   }
 };
