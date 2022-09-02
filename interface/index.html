@@ -106,7 +106,7 @@
           const time = pos.tt || 0;
           const date = (new Date(time*1000)).toLocaleString('de-DE');
           const circle = L.circle([pos.x, pos.y], opts).addTo(window.trackermap);
-          circle.bindTooltip(date + '<br />' + pos.x + ' / ' + pos.y);
+          circle.bindTooltip('[' + pos.u + ']' + date + '<br />' + pos.x + ' / ' + pos.y);
         });
       }
 
