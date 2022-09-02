@@ -171,6 +171,7 @@
       if (options.show == 'history') {
         const size = options.size || 20;
         showHistoryOnMap(size, {animateTrip: false});
+        showCurrentPositionOnMap();
       }
 
       // In trip mode, all datapoints are fetched and a history line
