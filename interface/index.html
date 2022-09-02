@@ -28,6 +28,18 @@
     <div id="time"></div>
 
     <script>
+      const COLOR_MAP = [
+        "#000000",
+        "#0000FF",
+        "#FF0000",
+        "#800000",
+        "#000080",
+        "#808000",
+        "#008000",
+        "#800080",
+        "#008080"
+      ];
+
       function setupMap() {
         const tilepath = '../resource/maptiles/{z}/{x}/{y}.png';
         const tilezoom = {maxZoom: 15};
@@ -70,28 +82,49 @@
           if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
             const payload = JSON.parse(xmlHttp.responseText);
 
+            // Group by tracker
+            let tracks = {};
+            payload.data.position.forEach((pos) => {
+              tracks[pos.u] ||= Array.from([]);
+              tracks[pos.u].push(pos);
+            });
+
+            // If user sets a limit, apply that
+            if (historyOpts.limitToDevice) {
+              const allowed = tracks[historyOpts.limitToDevice];
+              tracks = {};
+              tracks[historyOpts.limitToDevice] = allowed;
+            }
+
             if (historyOpts.animateTrip) {
+              const positions = tracks[historyOpts.limitToDevice];
               let tooClose = [];
-              payload.data.position.reverse()
-              for (let i = 1; i < payload.data.position.length; i++) {
-                const curr = payload.data.position[i];
-                const prev = payload.data.position[i-1];
+              positions.reverse()
+              for (let i = 1; i < positions.length; i++) {
+                const curr = positions[i];
+                const prev = positions[i-1];
                 const diff = (Math.abs(curr.x - prev.x) + Math.abs(curr.y - prev.y));
                 if (diff < historyOpts.threshold) tooClose.push(i);
               }
 
-              const viableDots = payload.data.position.filter(function (x, i) {
+              const viableDots = positions.filter(function (x, i) {
                 return tooClose.indexOf(i) === -1;
               });
               animateMapDots(viableDots, 0, historyOpts.interval);
             } else {
-              const pos = payload.data.position.map(function (p) { return [p.x, p.y]; });
-              const opts = {color: '#0000ff', weight: 1};
-              const line = L.polyline(pos, opts).addTo(window.trackermap);
-              if (window.historyline) window.historyline.remove();
-              window.historyline = line;
+              let colorIndex = 0;
+              Object.keys(tracks).forEach((key) => {
+                const positions = tracks[key];
+                const pos = positions.map(function (p) { return [p.x, p.y]; });
+                const opts = {color: COLOR_MAP[colorIndex], weight: 1};
+                const line = L.polyline(pos, opts).addTo(window.trackermap);
+                if (!window.historyline) window.historyline = {};
+                if (window.historyline[key]) window.historyline[key].remove();
+                window.historyline[key] = line;
 
-              plotMapDots(payload.data.position, 0);
+                plotMapDots(positions, COLOR_MAP[colorIndex]);
+                colorIndex++;
+              });
             }
           }
         }
@@ -99,8 +132,8 @@
         xmlHttp.send(null);
       }
 
-      function plotMapDots(positions) {
-        const opts = {color: '#0000ff', radius: 10};
+      function plotMapDots(positions, color) {
+        const opts = {color: color, radius: 10};
 
         positions.forEach(function (pos) {
           const time = pos.tt || 0;
@@ -170,7 +203,10 @@
       // and a history line is drawn, showing the progress
       if (options.show == 'history') {
         const size = options.size || 20;
-        showHistoryOnMap(size, {animateTrip: false});
+        showHistoryOnMap(size, {
+          animateTrip: false,
+          limitToDevice: options.tracker
+        });
         showCurrentPositionOnMap();
       }
 
@@ -180,7 +216,8 @@
         showHistoryOnMap(12000, {
           animateTrip: true,
           threshold: parseFloat(options.treshold) || 0.0007,
-          interval: parseInt(options.interval) || 40
+          interval: parseInt(options.interval) || 40,
+          limitToDevice: options.tracker || "bum"
         });
       }
     </script>
