@@ -22,7 +22,7 @@ const self = {
     const positions = database.getPositionHistory(size);
     const payload = { data: { position: positions } };
 
-    resp.writeHead(200);
+    resp.writeHead(200, { 'Content-Type': 'application/json' });
     resp.end(JSON.stringify(payload));
   },
 
@@ -30,7 +30,7 @@ const self = {
     const position = database.getLatestPosition();
     const payload = { data: { position: position[0] } };
 
-    resp.writeHead(200);
+    resp.writeHead(200, { 'Content-Type': 'application/json' });
     resp.end(JSON.stringify(payload));
   },
 
