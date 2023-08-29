@@ -14,6 +14,12 @@ const self = {
   },
 
   routeRequest(route, req, resp) {
+    // Redirect to the route we deem most interesting on index
+    if (route[0] == 'GET' && route[1] == '/') {
+      response.writeHead(302, { 'Location': '/position/display#show:live' });
+      response.end();
+    }
+
     self.route('GET', '/position/display', route, req, resp, positionController, 'show');
     self.route('GET', '/position/history', route, req, resp, positionController, 'getHistory');
     self.route('GET', '/position/latest', route, req, resp, positionController, 'getLatest');
