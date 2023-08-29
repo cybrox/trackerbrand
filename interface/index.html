@@ -132,6 +132,36 @@
         xmlHttp.send(null);
       }
 
+      function showSummaryOnMap(size, start, end, interval) {
+        const xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            const payload = JSON.parse(xmlHttp.responseText);
+            const startTime = parseInt(start);
+            const endTime = parseInt(end);
+            const stepTime = parseInt(interval);
+          
+            const positions = payload.data.position.sort((a, b) => a.t < b.t);
+
+            console.log(binaryClosest(positions, 1000000000));
+
+            for (let time = startTime; time <= endTime; time += stepTime) {
+              // Binary search for closest data-point
+            }
+          }
+        }
+        xmlHttp.open('GET', './history?n=' + size, true);
+        xmlHttp.send(null);
+      }
+
+      function binaryClosest(list, time) {
+        if (list.length <= 2) return list[0];
+
+        const midindex = Math.floor(list.length / 2)
+        const midpoint = list[midindex].t;
+        return (midpoint < time) ? binaryClosest(list.slice(0, midindex), time) : binaryClosest(list.slice(midindex, list.length - 1), time);        
+      }
+
       function plotMapDots(positions, color) {
         const opts = {color: color, radius: 10};
 
@@ -219,6 +249,15 @@
           interval: parseInt(options.interval) || 40,
           limitToDevice: options.tracker || "opo"
         });
+      }
+
+      if (options.show == 'summary') {
+        showSummaryOnMap(
+          options.limit || 100000,
+          options.start || "1662199200",
+          options.end || "1662825600",
+          options.interval || "60"
+        );
       }
     </script>
   </body>
