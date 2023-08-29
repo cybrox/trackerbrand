@@ -15,7 +15,7 @@ const self = {
 
   routeRequest(route, req, resp) {
     // Redirect to the route we deem most interesting on index
-    if (route[0] == 'GET' && route[1] == '/') {
+    if (route[0] === 'GET' && route[1] === '/') {
       resp.writeHead(302, { 'Location': '/position/display#show:live' });
       resp.end();
       return;
