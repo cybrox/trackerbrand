@@ -51,6 +51,7 @@
       }
 
       function scaleMap() {
+        document.getElementById('tracker').style.width = window.innerWidth + 'px';
         document.getElementById('tracker').style.height = window.innerHeight + 'px';
       }
 
@@ -199,7 +200,7 @@
 
       setupMap();
       scaleMap();
-      window.onresize = scaleMap();
+      window.onresize = () => scaleMap();
       window.onhashchange = function () {
         window.location.reload();
       }
